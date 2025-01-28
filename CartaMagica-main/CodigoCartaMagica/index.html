@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crea y personaliza tu carta mágica con esta herramienta interactiva.">
+    <link rel="stylesheet" href="style/style.css">
+    <script src="js/aplicativo.js" defer></script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <title>Carta Mágica</title>
+</head>
+<body>
+    <header>
+        <img src="img/titulo.png" alt="Título de Carta Mágica" class="titulo-img">
+    </header>
+
+    <main class="parent">
+        <!-- Sección de Destinatario -->
+        <section class="destinatario">
+            <h2>Destinatario</h2>
+            <label for="recipient">Nombre del destinatario:</label>
+            <input type="text" id="recipient" placeholder="Escribe o selecciona un destinatario" readonly>
+            
+            <button id="help-btn" class="help-button" aria-label="Ayuda">
+                <img src="img/interrogacion.png" alt="Ícono de ayuda" class="help-icon">
+            </button>
+
+            <div class="recipient-gallery">
+                <h3>Selecciona una imagen</h3>
+                <div class="gallery-item">
+                    <img src="img/padre.png" alt="Papá" data-recipient="Papá" class="small-image">
+                    <span>Papá</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/img_madre.png" alt="Mamá" data-recipient="Mamá" class="small-image">
+                    <span>Mamá</span>
+                </div>
+            </div>
+
+            <div id="botonanadir" class="controls">
+                <button id="add-btn" aria-label="Añadir destinatario">
+                    <img src="img/anadir.png" alt="Añadir" class="button-icon">Añadir
+                </button>
+            </div>
+        </section>
+
+        <!-- Modal para añadir destinatario -->
+        <div id="addRecipientModal" class="modal">
+            <div class="modal-content">
+                <h2>Añadir nuevo destinatario</h2>
+                <form id="recipient-form">
+                    <label for="new-name">Nombre:</label>
+                    <input type="text" id="new-name" required>
+                    
+                    <label for="new-email">Correo:</label>
+                    <input type="email" id="new-email" required>
+                    
+                    <p>Seleccionar imagen:</p>
+                    <div class="radio-group">
+                        <input type="radio" id="male-pic" name="gender-pic" value="img/hombre.png" required>
+                        <label for="male-pic">Hombre</label>
+                        
+                        <input type="radio" id="female-pic" name="gender-pic" value="img/mujer.png" required>
+                        <label for="female-pic">Mujer</label>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button type="submit" id="save-recipient-btn">Guardar</button>
+                        <button type="button" id="close-modal-btn">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sección de la Carta -->
+        <section class="carta">
+            <h2>Tu carta</h2>
+            <p>Presiona el botón "Hablar" para comenzar tu dictado.</p>
+            <textarea id="output" placeholder="Tu carta aparecerá aquí..." aria-label="Área de texto de la carta"></textarea>
+            
+            <div class="controls">
+                <button id="start-btn" aria-label="Iniciar dictado">
+                    <img src="img/microfono.png" alt="Hablar" class="button-icon">Hablar
+                </button>
+                <button id="stop-btn" disabled aria-label="Pausar dictado">
+                    <img src="img/detener.png" alt="Detener" class="button-icon">Pausar
+                </button>
+                <button id="listen-text-btn" aria-label="Escuchar texto">
+                    <img src="img/sonido.png" alt="Escuchar" class="button-icon">Escuchar
+                </button>
+                <button id="reset-text-btn" aria-label="Reiniciar texto">
+                    <img src="img/reiniciar.png" alt="Reiniciar" class="button-icon">Reiniciar
+                </button>
+            </div>
+            <div id="timer-display" class="timer-display">00:30</div>
+        </section>
+
+        <!-- Sección de Personalización -->
+        <section class="estilos">
+            <h3>Personaliza tu carta</h3>
+            
+            <div class="customization-options">
+                <div class="font-options">
+                    <h4>Estilos de texto</h4>
+                    <div class="font-box" data-font="Arial" style="font-family: Arial;">Arial</div>
+                    <div class="font-box" data-font="Georgia" style="font-family: Georgia;">Georgia</div>
+                    <div class="font-box" data-font="Verdana" style="font-family: Verdana;">Verdana</div>
+                    <div class="font-box" data-font="Courier New" style="font-family: 'Courier New';">Courier New</div>
+                </div>
+
+                <div class="background-options">
+                    <h4>Estilos de fondo</h4>
+                    <div class="background-box" data-color="white" style="background-color: white;"></div>
+                    <div class="background-box" data-color="lightgreen" style="background-color: lightgreen;"></div>
+                    <div class="background-box" data-color="lightblue" style="background-color: lightblue;"></div>
+                    <div class="background-box" data-color="lightpink" style="background-color: lightpink;"></div>
+                </div>
+
+                <div class="theme-options">
+                    <h4>Fondos temáticos</h4>
+                    <button id="open-background-modal-btn" aria-label="Abrir fondos temáticos">
+                        <img src="img/mas.png" alt="Más opciones" class="button-icon" />
+                    </button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="export-pdf-btn" aria-label="Exportar a PDF">
+                    <img src="img/pdf.png" alt="PDF" class="button-icon">PDF
+                </button>
+                <button id="send-email-btn" aria-label="Enviar por correo">
+                    <img src="img/mail.png" alt="Correo" class="button-icon">Correo
+                </button>
+            </div>
+        </section>
+
+        <!-- Modal para fondos temáticos -->
+        <div id="backgroundModal" class="modal">
+            <div class="modal-content">
+                <h2>Elige un fondo</h2>
+                <div class="background-image-option">
+                    <h3>Fondo Cumpleaños</h3>
+                    <img src="img/fondocumpleanos.png" alt="Fondo Cumpleaños" class="background-image" />
+                </div>
+                <div class="background-image-option">
+                    <h3>Fondo Agradecimiento</h3>
+                    <img src="img/fondoagradecimiento.png" alt="Fondo Agradecimiento" class="background-image" />
+                </div>
+                <div class="background-image-option">
+                    <h3>Fondo Navidad</h3>
+                    <img src="img/fondonavidad.png" alt="Fondo Navidad" class="background-image" />
+                </div>
+                <div class="background-image-option">
+                    <h3>Fondo Vacaciones</h3>
+                    <img src="img/fondo4.png" alt="Fondo Vacaciones" class="background-image" />
+                </div>
+                <div class="background-image-option">
+                    <h3>Fondo Escolar</h3>
+                    <img src="img/fondo5.png" alt="Fondo Escolar" class="background-image" />
+                </div>
+                <button id="close-background-modal-btn">Cerrar</button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
